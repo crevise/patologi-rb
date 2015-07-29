@@ -78,10 +78,9 @@ class NotificationsController < ApplicationController
 	def show
 		# @notifications = Notification.where(order_id: params[:order_id], flag: params[:flag].to_b)
 		@notifications = Notification.order('created_at desc')
-    
     @notifications.where!('created_at > ?', search_params[:created_after])  if search_params[:created_after].present?
 	  @notifications.where!('created_at < ?', search_params[:created_before]) if search_params[:created_before].present?
-	  @notifications.where!(order_id: search_params[:order_id]) if search_params[:order_id].present?
+	  @notifications.where!("order_id LIKE :orderID", {:orderID => "#{params[:order_id]}%"}) if search_params[:order_id].present?
 	  @notifications.where!(flag: search_params[:flag].to_b) if search_params[:flag].present?
 	  @notifications.where!(status_code: search_params[:status_code]) if search_params[:status_code].present?
 
